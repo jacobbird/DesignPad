@@ -6,6 +6,12 @@
 
 package designpad;
 
+import javafx.scene.shape.Rectangle;
+import javafx.geometry.Point2D;
+import javafx.util.Duration;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -24,11 +30,17 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 /**
@@ -40,6 +52,23 @@ public class DesignPad extends Application {
     
     private enum modes{square,rectangle,circle,oval,curve,undo};
     private static modes currentMode;
+    private double mouseStartPointX;
+    private double mouseStartPointY;
+    private double mouseEndPointX;
+    private double mouseEndPointY;
+    
+    /*public void start(Stage primaryStage){
+        Pane canvas = new Pane();
+        RectangleLocal rl = new RectangleLocal();
+        rl.draw(canvas);
+        
+        Scene scene = new Scene(canvas, 700, 600);
+        
+        primaryStage.setTitle("DesignPad");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }*/
+    
     
     @Override
     public void start(Stage primaryStage) {
@@ -314,13 +343,93 @@ public class DesignPad extends Application {
         
         root.setCenter(bp2);
         
+        //ScrollPane sp = new ScrollPane();
+        //bp2.setCenter(sp);
+        //sp.setCursor(Cursor.CROSSHAIR);
+        //Pane canvas = new StackPane();
+        
+        Pane canvas2 = new Pane();
+        bp2.setCenter(canvas2);
+        
+        //sp.setContent(canvas);
+        
+        Rectangle rectDraw = new Rectangle();
+        
+        final Duration oneFrameAmt =  Duration.millis(100);
+        final Timeline timeline = new Timeline();
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.setAutoReverse(true);
+        final KeyValue kv = new KeyValue(canvas2.scaleYProperty(),1);
+        KeyFrame oneFrame = new KeyFrame(oneFrameAmt,new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                
+                RectangleLocal rect = new RectangleLocal();
+                canvas2.setOnMousePressed(new EventHandler<MouseEvent>(){
+                   public void handle(MouseEvent me){
+                       mouseStartPointX = me.getX();
+                       mouseStartPointY = me.getY();
+                       
+                       
+                       
+                       
+                       /*Rectangle rectangle2 = new Rectangle(100,100, Color.GRAY);
+                       rectangle2.relocate(100, 100);
+                       //canvas2.getChildren().add(rectangle2);
+                       
+                            canvas2.setStyle("-fx-background-color: black;");
+                            canvas2.setPrefSize(200,200);
+                            Circle circle = new Circle(50,Color.BLUE);
+                            circle.relocate(20, 20);
+                            Rectangle rectangle = new Rectangle(100,100,Color.RED);
+                            rectangle.relocate(70,70);
+                            canvas2.getChildren().addAll(rectangle,circle);
+                            */
+                            
+                   } 
+                });
+        int i=1;
+        
+        canvas2.setOnMouseDragged(new EventHandler<MouseEvent>(){
+                   public void handle(MouseEvent me){
+                       mouseEndPointX = me.getX();
+                       mouseEndPointY = me.getY();
+                       Point2D startPoint = new Point2D(mouseStartPointX, mouseStartPointY);
+                       Point2D endPoint = new Point2D(mouseEndPointX, mouseEndPointY);
+                       rect.setPoint2DFirst(startPoint);
+                       rect.setPoint2DSecond(endPoint);  
+                       rect.draw(canvas2, rectDraw);
+                       
+                       /*
+                            canvas2.setStyle("-fx-background-color: black;");
+                            canvas2.setPrefSize(200+i,200+i);
+                            Circle circle = new Circle(50,Color.BLUE);
+                            circle.relocate(20, 20);
+                            Rectangle rectangle = new Rectangle(100,100,Color.RED);
+                            rectangle.relocate(70+i,70+i);
+                            canvas2.getChildren().addAll(circle,rectangle);
+                       */
+                   } 
+                });
+                
+                
+                
+                //f(currentMode==modes.rectangle){
+               
+                
+                
+            };},kv);
+            
+        timeline.getKeyFrames().add(oneFrame);
+        timeline.play();
+        
         Scene scene = new Scene(root, 700, 600);
         
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("DesignPad");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
+    
     /**
      * @param args the command line arguments
      */

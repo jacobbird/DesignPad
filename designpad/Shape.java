@@ -5,6 +5,7 @@
  */
 package designpad;
 
+import javafx.geometry.Point2D;
 /**
  *
  * @author Jacob
@@ -12,11 +13,12 @@ package designpad;
 public interface Shape {
     
     public String getShapeType();
-    public Point getFirstPoint();
-    public Point getSecondPoint();
-    public void setXFirstPoint(double x1);
-    public void setYFirstPoint(double y1);
-    public void setXSecondPoint(double x2);
-    public void setYSecondPoint(double y2);
-    
+    public Point2D getFirstPoint2D();
+    public Point2D getSecondPoint2D();
+    /*
+    public void setXFirstPoint(int x1);
+    public void setYFirstPoint(int y1);
+    public void setXSecondPoint(int x2);
+    public void setYSecondPoint(int y2);
+    */
 }
