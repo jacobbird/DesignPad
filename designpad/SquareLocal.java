@@ -7,6 +7,8 @@ package designpad;
 
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 /**
  *
  * @author Jacob
@@ -17,18 +19,28 @@ public class SquareLocal implements Shape {
     private Point2D secondPoint2D;
     
     public SquareLocal(){
-        this.firstPoint2D.add(0,0);
-        this.secondPoint2D.add(0,0);
+        firstPoint2D = new Point2D(0,0);
+        secondPoint2D = new Point2D(0,0);
     }
     
     public SquareLocal(double x1, double y1, double x2, double y2){
-        this.firstPoint2D.add(x1,y1);
-        this.secondPoint2D.add(x2,y2);
+        firstPoint2D = new Point2D(x1,y1);
+        secondPoint2D = new Point2D(x2,y2);
     }
     
     public SquareLocal(Point2D p1, Point2D p2){
+        firstPoint2D = new Point2D(0,0);
+        secondPoint2D = new Point2D(0,0);
         this.firstPoint2D.add(p1);
         this.secondPoint2D.add(p2);
+    }
+    
+     public void setPoint2DFirst(Point2D p2D){
+        firstPoint2D = p2D;
+    }
+    
+    public void setPoint2DSecond(Point2D p2D){
+        secondPoint2D = p2D;
     }
     /*
     public void setXFirstPoint2D(double x1){
@@ -59,11 +71,63 @@ public class SquareLocal implements Shape {
         return this.secondPoint2D;
     }
     
-    public void draw(Pane canvas){
-        javafx.scene.shape.Rectangle rect= new javafx.scene.shape.Rectangle(
-            firstPoint2D.getX(), firstPoint2D.getY(), 
-            firstPoint2D.getX()-secondPoint2D.getX(), 
-            firstPoint2D.getX()-secondPoint2D.getX());
+    public void draw(Pane canvas, Rectangle rect){
+        if(Math.abs(secondPoint2D.getX()-firstPoint2D.getX())>Math.abs(secondPoint2D.getY()-secondPoint2D.getY())){
+        
+            if(((this.secondPoint2D.getX()-this.firstPoint2D.getX())<0)&&((this.secondPoint2D.getY()-this.firstPoint2D.getY())<0)){
+                rect.setX(this.secondPoint2D.getX());
+                rect.setY(this.secondPoint2D.getY());
+                rect.setWidth(this.firstPoint2D.getX()-this.secondPoint2D.getX());
+                rect.setHeight(this.firstPoint2D.getX()-this.secondPoint2D.getX());
+            }
+            else if (this.secondPoint2D.getX()-this.firstPoint2D.getX()<0){
+                rect.setX(this.secondPoint2D.getX());
+                rect.setY(this.firstPoint2D.getY());
+                rect.setWidth(this.firstPoint2D.getX()-this.secondPoint2D.getX());
+                rect.setHeight(this.firstPoint2D.getX()-this.secondPoint2D.getX());
+            }
+            else if(this.secondPoint2D.getY()-this.firstPoint2D.getY()<0){
+                rect.setX(this.firstPoint2D.getX());
+                rect.setY(this.secondPoint2D.getY());
+                rect.setWidth(this.secondPoint2D.getX()-this.firstPoint2D.getX());
+                rect.setHeight(this.secondPoint2D.getX()-this.firstPoint2D.getX());
+            }
+            else{
+                rect.setX(this.firstPoint2D.getX());
+                rect.setY(this.firstPoint2D.getY());
+                rect.setWidth(this.secondPoint2D.getX()-this.firstPoint2D.getX()); 
+                rect.setHeight(this.secondPoint2D.getX()-this.firstPoint2D.getX());
+            }
+        }
+        else{
+            if(((this.secondPoint2D.getX()-this.firstPoint2D.getX())<0)&&((this.secondPoint2D.getY()-this.firstPoint2D.getY())<0)){
+                rect.setX(this.secondPoint2D.getX());
+                rect.setY(this.secondPoint2D.getY());
+                rect.setWidth(this.firstPoint2D.getY()-this.secondPoint2D.getY());
+                rect.setHeight(this.firstPoint2D.getY()-this.secondPoint2D.getY());
+            }
+            else if (this.secondPoint2D.getX()-this.firstPoint2D.getX()<0){
+                rect.setX(this.secondPoint2D.getX());
+                rect.setY(this.firstPoint2D.getY());
+                rect.setWidth(this.secondPoint2D.getY()-this.firstPoint2D.getY());
+                rect.setHeight(this.secondPoint2D.getY()-this.firstPoint2D.getY());
+            }
+            else if(this.secondPoint2D.getY()-this.firstPoint2D.getY()<0){
+                rect.setX(this.firstPoint2D.getX());
+                rect.setY(this.secondPoint2D.getY());
+                rect.setWidth(this.firstPoint2D.getY()-this.secondPoint2D.getY());
+                rect.setHeight(this.firstPoint2D.getY()-this.secondPoint2D.getY());
+            }
+            else{
+                rect.setX(this.firstPoint2D.getX());
+                rect.setY(this.firstPoint2D.getY());
+                rect.setWidth(this.secondPoint2D.getY()-this.firstPoint2D.getY()); 
+                rect.setHeight(this.secondPoint2D.getY()-this.firstPoint2D.getY());
+            }
+        }
+          
+        rect.setStroke(Color.BLACK);
+        rect.setFill(Color.color(0, 0, 0, 0));
         
         canvas.getChildren().add(rect);
     }

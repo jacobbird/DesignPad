@@ -13,8 +13,9 @@ import javafx.geometry.Point2D;
 public interface Shape {
     
     public String getShapeType();
-    public Point2D getFirstPoint2D();
-    public Point2D getSecondPoint2D();
+    
+    //public Point2D getFirstPoint2D();
+    //public Point2D getSecondPoint2D();
     /*
     public void setXFirstPoint(int x1);
     public void setYFirstPoint(int y1);
