@@ -64,6 +64,8 @@ public class DesignPad extends Application {
     private double mouseEndPointY;
     private boolean control1;
     private Drawing drawing;
+    private Point2D startPoint;
+    private Point2D endPoint;
     private CubicCurveLocalShape cCurveLocalS;
 
     /*public void start(Stage primaryStage){
@@ -361,9 +363,7 @@ public class DesignPad extends Application {
         bp2.setCenter(canvas2);
 
         //sp.setContent(canvas);
-        Rectangle rectDraw = new Rectangle();
-        Ellipse ellDraw = new Ellipse();
-        CubicCurve ccuDraw = new CubicCurve();
+        
 
         final Duration oneFrameAmt = Duration.millis(10);
         final Timeline timeline = new Timeline();
@@ -374,15 +374,12 @@ public class DesignPad extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 
+                
                 if(drawing.count()>0){
                     drawing.draw(canvas2);
                 }
                 
-                RectangleLocal rect = new RectangleLocal();
-                OvalLocal ell = new OvalLocal();
-                CircleLocal cir = new CircleLocal();
-                SquareLocal squ = new SquareLocal();
-                CCurveLocal ccu = new CCurveLocal();
+                
 
                 canvas2.setOnMousePressed(new EventHandler<MouseEvent>() {
                     public void handle(MouseEvent me) {
@@ -415,9 +412,10 @@ public class DesignPad extends Application {
                     }
                 });
                 int i = 1;
-
+                
                 canvas2.setOnMouseDragged(new EventHandler<MouseEvent>() {
                     public void handle(MouseEvent me) {
+                        
                         if (currentMode == modes.curve) {
                             if (control1 == true) {
                                 mouseControlPoint1X = me.getX();
@@ -430,49 +428,9 @@ public class DesignPad extends Application {
                             mouseEndPointX = me.getX();
                             mouseEndPointY = me.getY();
                         }
-                        Point2D startPoint = new Point2D(mouseStartPointX, mouseStartPointY);
-                        Point2D endPoint = new Point2D(mouseEndPointX, mouseEndPointY);
-                        if (currentMode == modes.rectangle) {
-                            
-        
-                            rect.setPoint2DFirst(startPoint);
-                            rect.setPoint2DSecond(endPoint);
-                            rect.draw(canvas2, rectDraw);
-                        } else if (currentMode == modes.oval) {
-                           
-                            
-                            ell.setPoint2DFirst(startPoint);
-                            ell.setPoint2DSecond(endPoint);
-                            ell.setCenterPoint();
-                            ell.draw(canvas2, ellDraw);
-                        } else if (currentMode == modes.circle) {
-                            
-                           
-        
-                            
-                            cir.setPoint2DFirst(startPoint);
-                            cir.setPoint2DSecond(endPoint);
-                            cir.setCenterPoint();
-                            cir.draw(canvas2, ellDraw);
-                        } else if (currentMode == modes.square) {
-                            
-                           
-       
-                            
-                            squ.setPoint2DFirst(startPoint);
-                            squ.setPoint2DSecond(endPoint);
-                            squ.draw(canvas2, rectDraw);
-                        } else if (currentMode == modes.curve && control1 == false) {
-                            
-        
-                                 
-                            ccu.setStartPoint(mouseStartPointX, mouseStartPointY);
-                            ccu.setControlPoint1(mouseControlPoint1X, mouseControlPoint1Y);
-                            ccu.setEndPoint(mouseEndPointX, mouseEndPointY);
-                            ccu.setControlPoint2(mouseControlPoint2X, mouseControlPoint2Y);
-                            ccu.draw(canvas2, ccuDraw);
-
-                        }
+                        startPoint = new Point2D(mouseStartPointX, mouseStartPointY);
+                        endPoint = new Point2D(mouseEndPointX, mouseEndPointY);
+                        
                         /*
                             canvas2.setStyle("-fx-background-color: black;");
                             canvas2.setPrefSize(200+i,200+i);
@@ -484,46 +442,90 @@ public class DesignPad extends Application {
                          */
                     }
                 });
-
+                
+                Rectangle rectDraw = new Rectangle();
+                Ellipse ellDraw = new Ellipse();
+                CubicCurve ccuDraw = new CubicCurve();
+                
+                RectangleLocal rect = new RectangleLocal();
+                OvalLocal ell = new OvalLocal();
+                CircleLocal cir = new CircleLocal();
+                SquareLocal squ = new SquareLocal();
+                CCurveLocal ccu = new CCurveLocal();
+                
+                if (currentMode == modes.rectangle && startPoint!=null && endPoint != null) {
+                            rect.setPoint2DFirst(startPoint);
+                            rect.setPoint2DSecond(endPoint);
+                            rect.draw(canvas2, rectDraw);
+                        } else if (currentMode == modes.oval && startPoint!=null && endPoint != null) {
+                            ell.setPoint2DFirst(startPoint);
+                            ell.setPoint2DSecond(endPoint);
+                            ell.setCenterPoint();
+                            ell.draw(canvas2, ellDraw);
+                        } else if (currentMode == modes.circle && startPoint!=null && endPoint != null) {
+                            cir.setPoint2DFirst(startPoint);
+                            cir.setPoint2DSecond(endPoint);
+                            cir.setCenterPoint();
+                            cir.draw(canvas2, ellDraw);
+                        } else if (currentMode == modes.square && startPoint!=null && endPoint != null) {
+                            squ.setPoint2DFirst(startPoint);
+                            squ.setPoint2DSecond(endPoint);
+                            squ.draw(canvas2, rectDraw);
+                        } else if (currentMode == modes.curve && control1 == false) 
+                        {
+                            ccu.setStartPoint(mouseStartPointX, mouseStartPointY);
+                            ccu.setControlPoint1(mouseControlPoint1X, mouseControlPoint1Y);
+                            ccu.setEndPoint(mouseEndPointX, mouseEndPointY);
+                            ccu.setControlPoint2(mouseControlPoint2X, mouseControlPoint2Y);                           
+                            ccu.draw(canvas2, ccuDraw);
+                            
+                        }
+               
                 canvas2.setOnMouseReleased(new EventHandler<MouseEvent>() {
 
                     @Override
                     public void handle(MouseEvent me) {
-                        if(control1 == false){
-                            mouseStartPointX = mouseEndPointX;
-                            mouseStartPointY = mouseEndPointY;
-                            mouseControlPoint1X= 2*mouseStartPointX-mouseControlPoint2X;
-                            mouseControlPoint1Y= 2*mouseStartPointY-mouseControlPoint2Y;
-                        }
-
-                        if (currentMode == modes.rectangle) {
-                            drawing.addShape(rect);
-                        } else if (currentMode == modes.oval) {
-                            drawing.addShape(ell);
-                        } else if (currentMode == modes.circle) {
-                            drawing.addShape(cir);
-                        } else if (currentMode == modes.square) {
-                            drawing.addShape(squ);
-                        } else if (currentMode == modes.curve && control1 == false) {
-                            cCurveLocalS.addCurve(ccu);
-                        }
-                        System.out.print(cCurveLocalS.count());
                         
                         
-                        if (control1 == true) {
-                            control1 = false;
-                        }
+                            if(control1 == false){
+                                mouseStartPointX = mouseEndPointX;
+                                mouseStartPointY = mouseEndPointY;
+                                mouseControlPoint1X= 2*mouseStartPointX-mouseControlPoint2X;
+                                mouseControlPoint1Y= 2*mouseStartPointY-mouseControlPoint2Y;
+                            }
+                            if (currentMode == modes.rectangle) {
+                                drawing.addShape(rect);
+                            } else if (currentMode == modes.oval) {
+                                drawing.addShape(ell);
+                            } else if (currentMode == modes.circle) {
+                                drawing.addShape(cir);
+                            } else if (currentMode == modes.square) {
+                                drawing.addShape(squ);
+                            } else if (currentMode == modes.curve && control1 == false) {
+                                cCurveLocalS.addCurve(ccu);
+                            }
+                            System.out.print(cCurveLocalS.count());
+                        
+                        
+                            if (control1 == true) {
+                                control1 = false;
+                            }
                     }
-
                 });
+            }
+         ;},kv);
+        
+        final Duration twoFrameAmt = Duration.millis(10);
+        KeyFrame twoFrame = new KeyFrame(twoFrameAmt, new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
                 
-                
-
-                //f(currentMode==modes.rectangle){
+                canvas2.getChildren().clear();
+              
             }
          ;},kv);
 
-        timeline.getKeyFrames().add(oneFrame);
+        timeline.getKeyFrames().addAll(oneFrame, twoFrame);
         timeline.play();
 
         Scene scene = new Scene(root, 700, 600);
