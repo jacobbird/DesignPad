@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.CubicCurve;
+import javafx.util.Duration;
 
 /**
  *
@@ -26,6 +27,7 @@ public class CCurveLocal {
     Double control2X;
     Double control2Y;
     
+    
     public CCurveLocal(){
         startX=0.0;
         startY=0.0;
@@ -34,7 +36,8 @@ public class CCurveLocal {
         control1X=0.0;
         control1Y=0.0;
         control2X=0.0;
-        control2Y=0.0;    
+        control2Y=0.0;
+    
         
     }
     
@@ -89,8 +92,25 @@ public class CCurveLocal {
             cub.setFill(Color.color(0, 0, 0, 0));
       
         canvas.getChildren().add(cub);
+    }
+    
+    public void drawForDrawing(Pane canvas, CubicCurve cub){
         
         
+        
+        cub.setStartX(startX);
+            cub.setStartY(startY);
+            cub.setControlX1(control1X);
+            cub.setControlY1(control1Y);
+            cub.setControlX2(control2X);
+            cub.setControlY2(control2Y);
+            cub.setEndX(endX);
+            cub.setEndY(endY);
+         
+            cub.setStroke(Color.BLACK);
+            cub.setFill(Color.color(0, 0, 0, 0));
+      
+        canvas.getChildren().add(cub);
     }
     
 }

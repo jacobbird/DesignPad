@@ -43,13 +43,13 @@ public class CubicCurveLocalShape implements Shape {
         cCArray.pop();
     }
     
-    public void draw(Pane canvas, CubicCurve drawCurve){
+    public void draw(Pane canvas, CubicCurve ccu){
        
         Iterator it = cCArray.iterator();
         
         while(it.hasNext()){
             CCurveLocal cCL = (CCurveLocal)it.next();
-            cCL.draw(canvas, drawCurve);
+            cCL.draw(canvas, ccu);
         }
     }
     

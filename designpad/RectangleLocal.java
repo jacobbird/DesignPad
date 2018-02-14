@@ -78,7 +78,6 @@ public class RectangleLocal implements Shape {
     
     public void draw(Pane canvas, Rectangle rect){
         
-        
         if(((this.secondPoint2D.getX()-this.firstPoint2D.getX())<0)&&((this.secondPoint2D.getY()-this.firstPoint2D.getY())<0)){
             rect.setX(this.secondPoint2D.getX());
             rect.setY(this.secondPoint2D.getY());
