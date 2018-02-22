@@ -5,6 +5,8 @@
  */
 package designpad;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
@@ -43,6 +45,11 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Ellipse;
 import javafx.stage.Stage;
+import javafx.embed.swing.SwingNode;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.JViewport;
 
 /**
  *
@@ -67,6 +74,7 @@ public class DesignPad extends Application {
     private Point2D startPoint;
     private Point2D endPoint;
     private CubicCurveLocalShape cCurveLocalS;
+    private Graphics g;
 
     /*public void start(Stage primaryStage){
         Pane canvas = new Pane();
@@ -79,8 +87,15 @@ public class DesignPad extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }*/
+    
+    
+    
     @Override
     public void start(Stage primaryStage) {
+        MyPanel panel = new MyPanel();
+        SwingNode swingNode = new SwingNode();
+        
+         
         cCurveLocalS=new CubicCurveLocalShape();
         drawing = new Drawing();
         control1 = true;
@@ -355,33 +370,42 @@ public class DesignPad extends Application {
 
         root.setCenter(bp2);
 
-        //ScrollPane sp = new ScrollPane();
+        
         //bp2.setCenter(sp);
         //sp.setCursor(Cursor.CROSSHAIR);
         //Pane canvas = new StackPane();
-        Pane canvas2 = new Pane();
-        bp2.setCenter(canvas2);
-
-        //sp.setContent(canvas);
+        
+        Pane canvas = new Pane();
+        bp2.setCenter(swingNode);
+        //JScrollPane jsp = (JScrollPane)swingNode.getContent();
         
 
-        final Duration oneFrameAmt = Duration.millis(10);
+        //JViewport viewport = jsp.getViewport(); 
+        //JPanel jp = (JPanel)viewport.getView(); 
+
+
+
+        final Duration oneFrameAmt = Duration.millis(120);
         final Timeline timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.setAutoReverse(true);
-        final KeyValue kv = new KeyValue(canvas2.scaleYProperty(), 1);
+        final KeyValue kv = new KeyValue(swingNode.scaleYProperty(), 1);
+        
         KeyFrame oneFrame = new KeyFrame(oneFrameAmt, new EventHandler<ActionEvent>() {
+            
+
+            
             @Override
             public void handle(ActionEvent actionEvent) {
                 
-                
+               /* 
                 if(drawing.count()>0){
-                    drawing.draw(canvas2);
+                    drawing.draw(jp);
                 }
+                */
                 
                 
-
-                canvas2.setOnMousePressed(new EventHandler<MouseEvent>() {
+                swingNode.setOnMousePressed(new EventHandler<MouseEvent>() {
                     public void handle(MouseEvent me) {
                         if (currentMode == modes.curve) {
                             if (control1 == true) {
@@ -413,7 +437,7 @@ public class DesignPad extends Application {
                 });
                 int i = 1;
                 
-                canvas2.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                swingNode.setOnMouseDragged(new EventHandler<MouseEvent>() {
                     public void handle(MouseEvent me) {
                         
                         if (currentMode == modes.curve) {
@@ -454,34 +478,33 @@ public class DesignPad extends Application {
                 CCurveLocal ccu = new CCurveLocal();
                 
                 if (currentMode == modes.rectangle && startPoint!=null && endPoint != null) {
-                            rect.setPoint2DFirst(startPoint);
-                            rect.setPoint2DSecond(endPoint);
-                            rect.draw(canvas2, rectDraw);
+                        rect.setPoint2DFirst(startPoint);
+                        rect.setPoint2DSecond(endPoint);
                         } else if (currentMode == modes.oval && startPoint!=null && endPoint != null) {
-                            ell.setPoint2DFirst(startPoint);
+                            /*ell.setPoint2DFirst(startPoint);
                             ell.setPoint2DSecond(endPoint);
                             ell.setCenterPoint();
-                            ell.draw(canvas2, ellDraw);
+                            ell.draw(jp);*/
                         } else if (currentMode == modes.circle && startPoint!=null && endPoint != null) {
-                            cir.setPoint2DFirst(startPoint);
+                            /*cir.setPoint2DFirst(startPoint);
                             cir.setPoint2DSecond(endPoint);
                             cir.setCenterPoint();
-                            cir.draw(canvas2, ellDraw);
+                            cir.draw(jp);*/
                         } else if (currentMode == modes.square && startPoint!=null && endPoint != null) {
-                            squ.setPoint2DFirst(startPoint);
+                            /*squ.setPoint2DFirst(startPoint);
                             squ.setPoint2DSecond(endPoint);
-                            squ.draw(canvas2, rectDraw);
+                            squ.draw(jp);*/
                         } else if (currentMode == modes.curve && control1 == false) 
                         {
-                            ccu.setStartPoint(mouseStartPointX, mouseStartPointY);
+                            /*ccu.setStartPoint(mouseStartPointX, mouseStartPointY);
                             ccu.setControlPoint1(mouseControlPoint1X, mouseControlPoint1Y);
                             ccu.setEndPoint(mouseEndPointX, mouseEndPointY);
                             ccu.setControlPoint2(mouseControlPoint2X, mouseControlPoint2Y);                           
-                            ccu.draw(canvas2, ccuDraw);
+                            ccu.draw(jp);*/
                             
                         }
                
-                canvas2.setOnMouseReleased(new EventHandler<MouseEvent>() {
+                swingNode.setOnMouseReleased(new EventHandler<MouseEvent>() {
 
                     @Override
                     public void handle(MouseEvent me) {
@@ -512,20 +535,27 @@ public class DesignPad extends Application {
                             }
                     }
                 });
+                panel.isRectangle(startPoint, endPoint);
+                panel.createAndSetSwingContent(swingNode);
+                
             }
          ;},kv);
         
+        
+        
+        
         final Duration twoFrameAmt = Duration.millis(10);
         KeyFrame twoFrame = new KeyFrame(twoFrameAmt, new EventHandler<ActionEvent>() {
+            //Pane canvas2 = (Pane)sp.getContent();
             @Override
             public void handle(ActionEvent actionEvent) {
                 
-                canvas2.getChildren().clear();
+             //   canvas2.getChildren().clear();
               
             }
          ;},kv);
-
-        timeline.getKeyFrames().addAll(oneFrame, twoFrame);
+        
+        timeline.getKeyFrames().addAll(oneFrame);
         timeline.play();
 
         Scene scene = new Scene(root, 700, 600);
@@ -535,6 +565,29 @@ public class DesignPad extends Application {
         primaryStage.show();
     }
 
+    private void createAndSetSwingContent(final SwingNode swingNode) {
+
+        class RectDraw extends JPanel {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g); 
+                Graphics2D g2d = (Graphics2D)g;
+                java.awt.Rectangle rect = new java.awt.Rectangle(230,80,10,10);
+                g2d.draw(rect);
+                repaint();
+            }
+        }
+  
+        
+        SwingUtilities.invokeLater(new Runnable() {
+             @Override
+             public void run() {
+                 JScrollPane sPane = new JScrollPane();
+                 RectDraw jPanel = new RectDraw();
+                 sPane.add(jPanel);
+                 swingNode.setContent(jPanel);
+             }
+         });
+     }
     /**
      * @param args the command line arguments
      */

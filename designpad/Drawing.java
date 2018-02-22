@@ -55,7 +55,7 @@ public class Drawing {
                 Rectangle rect = new Rectangle();
                 rectLoc = new RectangleLocal();
                 rectLoc = (RectangleLocal)sh;
-                rectLoc.draw(canvas, rect);
+                //rectLoc.draw(Graphics g);
             }
             else if(sh.getShapeType().compareToIgnoreCase("square")==0){
                 Rectangle rect = new Rectangle();
