@@ -5,8 +5,11 @@
  */
 package designpad;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
@@ -50,13 +53,82 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.JViewport;
+import javax.swing.ScrollPaneConstants;
+import java.awt.*;
+import java.awt.event.*;
+
+import java.util.Vector;
+
+import javax.swing.*;
 
 /**
  *
  * @author Jacob
  */
-public class DesignPad extends Application {
+public class DesignPad extends Application implements MouseListener, MouseMotionListener {
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) {
+         if (currentMode == modes.curve) {
+                            if (control1 == true) {
+                                mouseStartPointX = me.getX();
+                                mouseStartPointY = me.getY();
+
+                            } else {
+                                mouseEndPointX = me.getX();
+                                mouseEndPointY = me.getY();
+                            }
+                        } else {
+                            mouseStartPointX = me.getX();
+                            mouseStartPointY = me.getY();
+                        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent me) {
+        if (currentMode == modes.curve) {
+                            if (control1 == true) {
+                                mouseControlPoint1X = me.getX();
+                                mouseControlPoint1Y = me.getY();
+                            } else {
+                                mouseControlPoint2X = (mouseEndPointX - me.getX()) + mouseEndPointX;
+                                mouseControlPoint2Y = (mouseEndPointY - me.getY()) + mouseEndPointY;
+                            }
+                        } else {
+                            mouseEndPointX = me.getX();
+                            mouseEndPointY = me.getY();
+                        }
+                        
+                        
+                        startPoint = new Point2D(mouseStartPointX, mouseStartPointY);
+                        endPoint = new Point2D(mouseEndPointX, mouseEndPointY);
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     private enum modes {
         square, rectangle, circle, oval, curve, undo
     };
@@ -75,7 +147,8 @@ public class DesignPad extends Application {
     private Point2D endPoint;
     private CubicCurveLocalShape cCurveLocalS;
     private Graphics g;
-
+    private RectDraw r;
+    private JScrollPane s;
     /*public void start(Stage primaryStage){
         Pane canvas = new Pane();
         RectangleLocal rl = new RectangleLocal();
@@ -376,16 +449,45 @@ public class DesignPad extends Application {
         //Pane canvas = new StackPane();
         
         Pane canvas = new Pane();
-        bp2.setCenter(swingNode);
+        
+        startPoint = new Point2D(0,0);
+        endPoint = new Point2D(0,0);
+        //panel.isRectangle(startPoint, endPoint);
+        //panel.createAndSetSwingContent(swingNode);
         //JScrollPane jsp = (JScrollPane)swingNode.getContent();
+        //int j = jsp.getComponentCount();
+        //System.out.print(j);
+        //jp = (RectDraw)jsp.getComponent(0);
+        
+        SwingNode swingNode2 = new SwingNode();
+         r = new RectDraw();
+                r.setPreferredSize(new Dimension(12000,12000));
+                r.addMouseListener(this);
+                
+                
+                 
+                 
+            
+        s = new JScrollPane(r);
+                JScrollBar hbar=new JScrollBar(JScrollBar.HORIZONTAL);
+                JScrollBar vbar=new JScrollBar(JScrollBar.VERTICAL);
+                s.setHorizontalScrollBar(hbar);
+                s.setVerticalScrollBar(vbar);
+                s.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+                s.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+                //r.requestFocus();
+                //hbar.requestFocusInWindow();
+                //vbar.requestFocusInWindow();
+                //r.repaint();
+                //s.setComponentZOrder((JPanel)r,3);
+        
+        //swingNode2.setContent(r);
+        
+        createAndSetSwingContent(swingNode);
         
 
-        //JViewport viewport = jsp.getViewport(); 
-        //JPanel jp = (JPanel)viewport.getView(); 
-
-
-
-        final Duration oneFrameAmt = Duration.millis(120);
+        bp2.setCenter(swingNode);
+        final Duration oneFrameAmt = Duration.millis(100);
         final Timeline timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.setAutoReverse(true);
@@ -393,19 +495,29 @@ public class DesignPad extends Application {
         
         KeyFrame oneFrame = new KeyFrame(oneFrameAmt, new EventHandler<ActionEvent>() {
             
+        
 
             
             @Override
             public void handle(ActionEvent actionEvent) {
+                //r.addPoints(startPoint, endPoint);
+                //s.repaint();
+                //r.repaint();
+                //hbar.repaint();
+                //vbar.repaint();
                 
-               /* 
+                //swingNode.setContent(s);
+               
+                
+                
+                /* 
                 if(drawing.count()>0){
                     drawing.draw(jp);
                 }
                 */
                 
                 
-                swingNode.setOnMousePressed(new EventHandler<MouseEvent>() {
+               /* swingNode.setOnMousePressed(new EventHandler<MouseEvent>() {
                     public void handle(MouseEvent me) {
                         if (currentMode == modes.curve) {
                             if (control1 == true) {
@@ -433,11 +545,11 @@ public class DesignPad extends Application {
                             rectangle.relocate(70,70);
                             canvas2.getChildren().addAll(rectangle,circle);
                          */
-                    }
-                });
+                   // }
+                //});
                 int i = 1;
                 
-                swingNode.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                /*swingNode.setOnMouseDragged(new EventHandler<MouseEvent>() {
                     public void handle(MouseEvent me) {
                         
                         if (currentMode == modes.curve) {
@@ -452,8 +564,10 @@ public class DesignPad extends Application {
                             mouseEndPointX = me.getX();
                             mouseEndPointY = me.getY();
                         }
-                        startPoint = new Point2D(mouseStartPointX, mouseStartPointY);
-                        endPoint = new Point2D(mouseEndPointX, mouseEndPointY);
+                        
+                        
+                        startPoint = new Point2D(mouseStartPointX+100, mouseStartPointY+100);
+                        endPoint = new Point2D(mouseEndPointX+100, mouseEndPointY+100);
                         
                         /*
                             canvas2.setStyle("-fx-background-color: black;");
@@ -464,8 +578,8 @@ public class DesignPad extends Application {
                             rectangle.relocate(70+i,70+i);
                             canvas2.getChildren().addAll(circle,rectangle);
                          */
-                    }
-                });
+                   // }
+                /*});
                 
                 Rectangle rectDraw = new Rectangle();
                 Ellipse ellDraw = new Ellipse();
@@ -485,26 +599,26 @@ public class DesignPad extends Application {
                             ell.setPoint2DSecond(endPoint);
                             ell.setCenterPoint();
                             ell.draw(jp);*/
-                        } else if (currentMode == modes.circle && startPoint!=null && endPoint != null) {
+                        //} else if (currentMode == modes.circle && startPoint!=null && endPoint != null) {
                             /*cir.setPoint2DFirst(startPoint);
                             cir.setPoint2DSecond(endPoint);
                             cir.setCenterPoint();
                             cir.draw(jp);*/
-                        } else if (currentMode == modes.square && startPoint!=null && endPoint != null) {
+                        //} else if (currentMode == modes.square && startPoint!=null && endPoint != null) {
                             /*squ.setPoint2DFirst(startPoint);
                             squ.setPoint2DSecond(endPoint);
                             squ.draw(jp);*/
-                        } else if (currentMode == modes.curve && control1 == false) 
-                        {
+                        //} else if (currentMode == modes.curve && control1 == false) 
+                        //{
                             /*ccu.setStartPoint(mouseStartPointX, mouseStartPointY);
                             ccu.setControlPoint1(mouseControlPoint1X, mouseControlPoint1Y);
                             ccu.setEndPoint(mouseEndPointX, mouseEndPointY);
                             ccu.setControlPoint2(mouseControlPoint2X, mouseControlPoint2Y);                           
                             ccu.draw(jp);*/
                             
-                        }
+                        //}
                
-                swingNode.setOnMouseReleased(new EventHandler<MouseEvent>() {
+                /*swingNode.setOnMouseReleased(new EventHandler<MouseEvent>() {
 
                     @Override
                     public void handle(MouseEvent me) {
@@ -535,8 +649,9 @@ public class DesignPad extends Application {
                             }
                     }
                 });
-                panel.isRectangle(startPoint, endPoint);
-                panel.createAndSetSwingContent(swingNode);
+                
+                */
+                
                 
             }
          ;},kv);
@@ -559,40 +674,142 @@ public class DesignPad extends Application {
         timeline.play();
 
         Scene scene = new Scene(root, 700, 600);
-
+        
         primaryStage.setTitle("DesignPad");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
+    
+    public void mousePressed(MouseEvent me) {
+                    if (currentMode == modes.curve) {
+                            if (control1 == true) {
+                                mouseStartPointX = me.getX();
+                                mouseStartPointY = me.getY();
+
+                            } else {
+                                mouseEndPointX = me.getX();
+                                mouseEndPointY = me.getY();
+                            }
+                        } else {
+                            mouseStartPointX = me.getX();
+                            mouseStartPointY = me.getY();
+                        }
+                    
+                }
+                
+                public void mouseDragged(MouseEvent me){
+                    if (currentMode == modes.curve) {
+                            if (control1 == true) {
+                                mouseControlPoint1X = me.getX();
+                                mouseControlPoint1Y = me.getY();
+                            } else {
+                                mouseControlPoint2X = (mouseEndPointX - me.getX()) + mouseEndPointX;
+                                mouseControlPoint2Y = (mouseEndPointY - me.getY()) + mouseEndPointY;
+                            }
+                        } else {
+                            mouseEndPointX = me.getX();
+                            mouseEndPointY = me.getY();
+                        }
+                        
+                        
+                        startPoint = new Point2D(mouseStartPointX, mouseStartPointY);
+                        endPoint = new Point2D(mouseEndPointX, mouseEndPointY);
+                        r.addPoints(startPoint,endPoint);
+                        r.repaint();
+                }
+                
+                public void mouseReleased(MouseEvent me) {
+                    
+                }
+    
     private void createAndSetSwingContent(final SwingNode swingNode) {
 
-        class RectDraw extends JPanel {
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g); 
-                Graphics2D g2d = (Graphics2D)g;
-                java.awt.Rectangle rect = new java.awt.Rectangle(230,80,10,10);
-                g2d.draw(rect);
-                repaint();
-            }
-        }
+        
   
         
         SwingUtilities.invokeLater(new Runnable() {
              @Override
              public void run() {
-                 JScrollPane sPane = new JScrollPane();
-                 RectDraw jPanel = new RectDraw();
-                 sPane.add(jPanel);
-                 swingNode.setContent(jPanel);
+                 
+                
+                 swingNode.setContent(s);
              }
          });
      }
+    
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         launch(args);
     }
+    
+    /*class RectDraw extends JPanel {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g); 
+                Graphics2D g2d = (Graphics2D)g;
+                
+                //if (cs==cs.rectangle){
+                    RectangleLocal rect = new RectangleLocal();
+                    rect.setPoint2DFirst(startPoint);
+                    rect.setPoint2DSecond(endPoint);
+                    rect.draw(g2d);
+                //java.awt.Rectangle rect = new java.awt.Rectangle((int)startPoint.getX(),(int)startPoint.getY(),(int)endPoint.getX()-(int)startPoint.getX(),(int)endPoint.getY()-(int)startPoint.getY());
+                //java.awt.Rectangle rect = new java.awt.Rectangle(100,100,100,100);
+                //}
+                
+                
+            }
+        }*/
+    
+     private void BringToFront() {
+                    java.awt.EventQueue.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                           if(r != null) {
+                                r.requestFocusInWindow();
+                               
+                                r.repaint();
+                            }
+                        }           
+                    }); 
+                }
+    
+    public class MyOwnFocusTraversalPolicy
+                  extends FocusTraversalPolicy
+    {
+        
+
+        public Component getInitialComponent(Window w){
+            return r;
+        }
+        
+        public Component getComponentAfter(Container focusCycleRoot,
+                                           Component aComponent)
+        {
+            return r;
+        }
+
+        public Component getComponentBefore(Container focusCycleRoot,
+                                            Component aComponent)
+        {
+            return r;
+        }
+
+        public Component getDefaultComponent(Container focusCycleRoot) {
+            return r;
+        }
+
+        public Component getLastComponent(Container focusCycleRoot) {
+            return r;
+        }
+
+        public Component getFirstComponent(Container focusCycleRoot) {
+            return r;
+        }
+    }
+    
 
 }
